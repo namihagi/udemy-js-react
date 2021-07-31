@@ -4,9 +4,17 @@ const onClickAdd = () => {
   const inputText = document.getElementById("add-text").value;
   document.getElementById("add-text").value = "";
 
+  addToIncompleteList(inputText);
+};
+
+document
+  .getElementById("add-button")
+  .addEventListener("click", () => onClickAdd());
+
+const addToIncompleteList = (text) => {
   // make row
   const p = document.createElement("p");
-  p.innerText = inputText;
+  p.innerText = text;
 
   const completeButton = document.createElement("button");
   completeButton.innerText = "Completed";
@@ -47,8 +55,15 @@ const completeButtonAction = (completeButton) => {
     backButtonAction(backButton);
   });
 
+  const deleteButton = document.createElement("button");
+  deleteButton.innerText = "Delete";
+  deleteButton.addEventListener("click", () => {
+    deleteFromList(deleteButton.closest("li"), "incomplete-list", true);
+  });
+
   addTarget.appendChild(p);
   addTarget.appendChild(backButton);
+  addTarget.appendChild(deleteButton);
 
   document.getElementById("complete-list").appendChild(addTarget);
 };
@@ -58,30 +73,8 @@ const backButtonAction = (backButton) => {
 
   const addTarget = backButton.parentNode;
   const incompleteText = addTarget.firstElementChild.innerText;
-  addTarget.textContent = null;
 
-  const p = document.createElement("p");
-  p.innerText = incompleteText;
-
-  const completeButton = document.createElement("button");
-  completeButton.innerText = "Completed";
-  completeButton.addEventListener("click", () => {
-    completeButtonAction(completeButton);
-  });
-
-  const deleteButton = document.createElement("button");
-  deleteButton.innerText = "Delete";
-  deleteButton.addEventListener("click", () => {
-    deleteFromList(deleteButton.closest("li"), "incomplete-list", true);
-  });
-
-  const li = document.createElement("li");
-  li.className = "list-row";
-  li.appendChild(p);
-  li.appendChild(completeButton);
-  li.appendChild(deleteButton);
-
-  document.getElementById("incomplete-list").appendChild(li);
+  addToIncompleteList(incompleteText);
 };
 
 const deleteFromList = (target, list, needConfirm = false) => {
@@ -95,7 +88,3 @@ const deleteFromList = (target, list, needConfirm = false) => {
     document.getElementById(list).removeChild(target);
   }
 };
-
-document
-  .getElementById("add-button")
-  .addEventListener("click", () => onClickAdd());
