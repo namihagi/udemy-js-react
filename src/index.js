@@ -1,13 +1,5 @@
 import "./styles.css";
 
-/* <li>
-  <div class="list-row">
-    <p>ToDo 1</p>
-    <button>Completed</button>
-    <button>Delete</button>
-  </div>
-</li> */
-
 const onClickAdd = () => {
   const inputText = document.getElementById("add-text").value;
   document.getElementById("add-text").value = "";
@@ -19,46 +11,89 @@ const onClickAdd = () => {
   const completeButton = document.createElement("button");
   completeButton.innerText = "Completed";
   completeButton.addEventListener("click", () => {
-    // delete from incomplete list
-    deleteFromIncompleteList(completeButton.closest("li"));
-
-    const addTarget = completeButton.parentNode;
-    const completeText = addTarget.firstElementChild.innerText;
-    addTarget.textContent = null;
-
-    const p = document.createElement("p");
-    p.innerText = completeText;
-
-    const backButton = document.createElement("button");
-    backButton.innerText = "Back";
-
-    addTarget.appendChild(p);
-    addTarget.appendChild(backButton);
-
-    document.getElementById("complete-list").appendChild(addTarget);
+    completeButtonAction(completeButton);
   });
 
   const deleteButton = document.createElement("button");
   deleteButton.innerText = "Delete";
   deleteButton.addEventListener("click", () => {
-    deleteFromIncompleteList(deleteButton.closest("li"));
+    deleteFromList(deleteButton.closest("li"), "incomplete-list", true);
   });
 
-  const div = document.createElement("div");
-  div.className = "list-row";
-  div.appendChild(p);
-  div.appendChild(completeButton);
-  div.appendChild(deleteButton);
-
   const li = document.createElement("li");
-  li.appendChild(div);
+  li.className = "list-row";
+  li.appendChild(p);
+  li.appendChild(completeButton);
+  li.appendChild(deleteButton);
 
   // add row to list
   document.getElementById("incomplete-list").appendChild(li);
 };
 
-const deleteFromIncompleteList = (target) => {
-  document.getElementById("incomplete-list").removeChild(target);
+const completeButtonAction = (completeButton) => {
+  // delete from incomplete list
+  deleteFromList(completeButton.closest("li"), "incomplete-list");
+
+  const addTarget = completeButton.parentNode;
+  const completeText = addTarget.firstElementChild.innerText;
+  addTarget.textContent = null;
+
+  const p = document.createElement("p");
+  p.innerText = completeText;
+
+  const backButton = document.createElement("button");
+  backButton.innerText = "Back";
+  backButton.addEventListener("click", () => {
+    backButtonAction(backButton);
+  });
+
+  addTarget.appendChild(p);
+  addTarget.appendChild(backButton);
+
+  document.getElementById("complete-list").appendChild(addTarget);
+};
+
+const backButtonAction = (backButton) => {
+  deleteFromList(backButton.closest("li"), "complete-list");
+
+  const addTarget = backButton.parentNode;
+  const incompleteText = addTarget.firstElementChild.innerText;
+  addTarget.textContent = null;
+
+  const p = document.createElement("p");
+  p.innerText = incompleteText;
+
+  const completeButton = document.createElement("button");
+  completeButton.innerText = "Completed";
+  completeButton.addEventListener("click", () => {
+    completeButtonAction(completeButton);
+  });
+
+  const deleteButton = document.createElement("button");
+  deleteButton.innerText = "Delete";
+  deleteButton.addEventListener("click", () => {
+    deleteFromList(deleteButton.closest("li"), "incomplete-list", true);
+  });
+
+  const li = document.createElement("li");
+  li.className = "list-row";
+  li.appendChild(p);
+  li.appendChild(completeButton);
+  li.appendChild(deleteButton);
+
+  document.getElementById("incomplete-list").appendChild(li);
+};
+
+const deleteFromList = (target, list, needConfirm = false) => {
+  let deleteConfirm = true;
+  if (needConfirm) {
+    // eslint-disable-next-line no-restricted-globals
+    deleteConfirm = confirm("Are you sure?");
+  }
+
+  if (deleteConfirm) {
+    document.getElementById(list).removeChild(target);
+  }
 };
 
 document
